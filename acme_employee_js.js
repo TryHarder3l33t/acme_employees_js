@@ -1,6 +1,4 @@
 const employees = [
-  
-          
   { id: 1, name: "moe" },
   { id: 2, name: "larry", managerId: 1 },
   { id: 4, name: "shep", managerId: 2 },
@@ -110,94 +108,92 @@ spacer("");
 
 spacer("generateManagementTree");
 const generateManagementTree = (arr) => {
-  let moee = arr.filter(emp => emp.managerId === undefined )
-  let employeess = arr.filter(emp=> emp.managerId !== undefined)
-  let ids = employeess.map(emp=> emp.id)
+  let moee = arr.filter((emp) => emp.managerId === undefined);
+  let employeess = arr.filter((emp) => emp.managerId !== undefined);
+  let ids = employeess.map((emp) => emp.id);
   //console.log(moee)
   //console.log(employeess)
   //console.log(ids )
   //Need index for employee identification
-  for(let i = 0; i<ids.length; i++){
-    resArr = []
-    for (let emp of employeess){
+  for (let i = 0; i < ids.length; i++) {
+    resArr = [];
+    for (let emp of employeess) {
       //console.log(emp)
-    if (ids[i] === emp.managerId){
-      resArr.push(emp)
-    }}
-    employeess[i][`results`] = resArr
-      
+      if (ids[i] === emp.managerId) {
+        resArr.push(emp);
+      }
+    }
+    employeess[i][`results`] = resArr;
   }
-  let finalArr = []
-  for (let i= 0; i<ids.length; i++) {
-    
-    if(moee.id === employeess.managerId ){
-     finalArr.push(employeess[i])
-     }
-    
+  let finalArr = [];
+  for (let i = 0; i < ids.length; i++) {
+    if (moee.id === employeess.managerId) {
+      finalArr.push(employeess[i]);
+    }
   }
-  moee['results'] = finalArr
-  
-  //console.log(employees)
- return finalArr
-}
-console.log(generateManagementTree(employees))
+  moee["results"] = finalArr;
 
-console.log(generateManagementTree(employees))
+  //console.log(employees)
+  return finalArr;
+};
+console.log(generateManagementTree(employees));
+
+console.log(generateManagementTree(employees));
 console.log(JSON.stringify(generateManagementTree(employees), null, 2));
 
-{
-  "id": 1,
-    "name":
-  "moe",
-    "reports": [{
-      "id": 2,
-      "name": "larry",
-      "managerId": 1,
-      "reports": [
-          {
-            "id": 4,
-            "name": "shep",
-            "managerId": 2,
-            "reports": [
-              {
-                "id": 8,
-                "name": "shep Jr.",
-                "managerId": 4,
-                "reports": []
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": 3,
-        "name": "curly",
-        "managerId": 1,
-        "reports": [
-          {
-            "id": 5,
-            "name": "groucho",
-            "managerId": 3,
-            "reports": [
-              {
-                "id": 6,
-                "name": "harpo",
-                "managerId": 5,
-                "reports": []
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": 99,
-        "name": "lucy",
-        "managerId": 1,
-        "reports": []
-      }
-    ]
-  }
-  
+// {
+//   "id": 1,
+//     "name":
+//   "moe",
+//     "reports": [{
+//       "id": 2,
+//       "name": "larry",
+//       "managerId": 1,
+//       "reports": [
+//           {
+//             "id": 4,
+//             "name": "shep",
+//             "managerId": 2,
+//             "reports": [
+//               {
+//                 "id": 8,
+//                 "name": "shep Jr.",
+//                 "managerId": 4,
+//                 "reports": []
+//               }
+//             ]
+//           }
+//         ]
+//       },
+//       {
+//         "id": 3,
+//         "name": "curly",
+//         "managerId": 1,
+//         "reports": [
+//           {
+//             "id": 5,
+//             "name": "groucho",
+//             "managerId": 3,
+//             "reports": [
+//               {
+//                 "id": 6,
+//                 "name": "harpo",
+//                 "managerId": 5,
+//                 "reports": []
+//               }
+//             ]
+//           }
+//         ]
+//       },
+//       {
+//         "id": 99,
+//         "name": "lucy",
+//         "managerId": 1,
+//         "reports": []
+//       }
+//     ]
+//   }
+
 spacer("");
 
 spacer("displayManagementTree");
