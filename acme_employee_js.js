@@ -19,39 +19,45 @@ const spacer = (text) => {
 
 spacer("findEmployeeByName Moe");
 // given a name and array of employees, return employee
+//returns array no good
+// const findEmployeeByName = (nam, arr) => {
+//   let employee = arr.filter((emp) => emp.name === nam);
+//   return employee[0];
+
+// };
 const findEmployeeByName = (nam, arr) => {
-  let employee = arr.filter((emp) => emp.name === nam);
-  return employee;
+  return arr.find((emp) => emp.name === nam);
 };
-console.log(findEmployeeByName("moe", employees)); //{ id: 1, name: 'moe' }
+console.log(JSON.stringify(findEmployeeByName("moe", employees))); //{ id: 1, name: 'moe' }
 
 spacer("");
 
 spacer("findManagerFor Shep Jr.");
 //given an employee and a list of employees, return the employee who is the manager
 const findManagerFor = (obj, arr) => {
-  //console.log(obj)
-  //console.log(arr)
-  const manager = arr.find((emp) => obj.managerId === emp.id);
-  console.log(manager);
-  return manager;
+  return arr.find((emp) => emp.id === obj.managerId);
 };
 console.log(
-  findManagerFor(findEmployeeByName("shep Jr.", employees), employees)
+  JSON.stringify(
+    findManagerFor(findEmployeeByName("shep Jr.", employees), employees)
+  )
 ); //{ id: 4, name: 'shep', managerId: 2 }
 spacer("");
 
 spacer("findCoworkersFor Larry");
 
 //given an employee and a list of employees, return the employees who report to the same manager
-const findCoworkersFor = (obj, arr) => {
-  coWorkers = arr.filter(
-    (cos) => obj.managerId === cos.managerId && obj.name !== cos.name
+const findCoworkersFor = (empObj, arr) => {
+  return arr.filter(
+    (emp) => empObj.managerId === emp.managerId && empObj.name !== emp.name
   );
-  console.log(coWorkers);
 };
 console.log(
-  findCoworkersFor(findEmployeeByName("larry", employees), employees)
+  JSON.stringify(
+    findCoworkersFor(findEmployeeByName("larry", employees), employees),
+    null,
+    2
+  )
 ); /*
   [ { id: 3, name: 'curly', managerId: 1 },
     { id: 99, name: 'lucy', managerId: 1 } ]
@@ -62,44 +68,41 @@ spacer("");
 spacer("findManagementChain for moe");
 //given an employee and a list of employees, return a the management chain for that employee. The management chain starts from the employee with no manager with the passed in employees manager
 const findManagementChainForEmployee = (obj, arr) => {
-  let arr2 = [];
-  let newObj = obj;
-  while (newObj.managerId !== undefined) {
-    let result = arr.find((emp) => newObj.managerId === emp.id);
-    arr2.push(result);
-    newObj = result;
+  if (obj.managerId === undefined) {
+    return [];
   }
-  //console.log(arr2)
-  return arr2.reverse();
+  let mixedArr = arr.filter(
+    (emp) => emp.id <= obj.managerId || emp.id === undefined
+  );
+  mixedArr.sort((a, b) => a.id - b.id);
+  return mixedArr;
 };
 
 console.log(
-  findManagementChainForEmployee(
-    findEmployeeByName("moe", employees),
-    employees
+  JSON.stringify(
+    findManagementChainForEmployee(
+      findEmployeeByName("moe", employees),
+      employees
+    )
   )
 ); //[  ]
 spacer("");
 
 spacer("findManagementChain for shep Jr.");
-const findManagementChainForEmployee = (obj, arr) => {
-  let arr2 = [];
-  let newObj = obj;
-  while (newObj.managerId !== undefined) {
-    let result = arr.find((emp) => newObj.managerId === emp.id);
-    arr2.push(result);
-    newObj = result;
-  }
-  //console.log(arr2)
-  return arr2.reverse();
-};
+//const findManagementChainForEmployee = (obj, arr) => {};
 
 console.log(
-  findManagementChainForEmployee(
-    findEmployeeByName("shep Jr.", employees),
-    employees
+  JSON.stringify(
+    findManagementChainForEmployee(
+      findEmployeeByName("shep Jr.", employees),
+      employees
+    ),
+    null,
+    2
   )
-); /*
+);
+//Should include Curly ID 3
+/*
   [ { id: 1, name: 'moe' },
     { id: 2, name: 'larry', managerId: 1 },
     { id: 4, name: 'shep', managerId: 2 }]
@@ -107,39 +110,49 @@ console.log(
 spacer("");
 
 spacer("generateManagementTree");
+// const generateManagementTree = (arr) => {
+//   employeess = arr.filter((emp) => emp.name !== `moe`);
+//   moee = arr.find((emp) => emp.name === `moe`);
+
+//   for (let b = 0; b < employeess.length; b++) {
+//     //debugger;
+//     let resArr = [];
+//     for (let e = 0; e < employeess.length; e++) {
+//       if (employeess[b][`id`] === employeess[e][`managerId`]) {
+//         resArr.push(employeess[e]);
+//       }
+//     }
+//     employeess[b][`reports`] = resArr;
+//   }
+//   let finalArr = [];
+//   finalArr = employeess.filter((emp) => moee.id === emp.managerId);
+//   moee[`reports`] = finalArr;
+//   return moee;
+// };
+
 const generateManagementTree = (arr) => {
-  let moee = arr.filter((emp) => emp.managerId === undefined);
   let employeess = arr.filter((emp) => emp.managerId !== undefined);
-  let ids = employeess.map((emp) => emp.id);
-  //console.log(moee)
-  //console.log(employeess)
-  //console.log(ids )
-  //Need index for employee identification
-  for (let i = 0; i < ids.length; i++) {
-    resArr = [];
-    for (let emp of employeess) {
-      //console.log(emp)
-      if (ids[i] === emp.managerId) {
-        resArr.push(emp);
+  let moee = arr.find((emp) => emp.managerId === undefined);
+
+  //each boss
+  for (let b = 0; b < employeess.length; b++) {
+    //each emp
+    let repArr = [];
+    for (let e = 0; e < employeess.length; e++) {
+      if (employeess[b][`id`] === employeess[e][`managerId`]) {
+        repArr.push(employeess[e]);
       }
     }
-    employeess[i][`results`] = resArr;
+    //add reports to boss
+    employeess[b][`reports`] = repArr;
   }
-  let finalArr = [];
-  for (let i = 0; i < ids.length; i++) {
-    if (moee.id === employeess.managerId) {
-      finalArr.push(employeess[i]);
-    }
-  }
-  moee["results"] = finalArr;
-
-  //console.log(employees)
-  return finalArr;
+  moee[`reports`] = employeess.filter((emp) => emp.managerId === moee.id);
+  //console.log(JSON.stringify(moee, null, 3));
+  return moee;
 };
-console.log(generateManagementTree(employees));
+console.log(JSON.stringify(generateManagementTree(employees), null, 3));
 
-console.log(generateManagementTree(employees));
-console.log(JSON.stringify(generateManagementTree(employees), null, 2));
+//if arr.hasOwnProperty(reports) console.log(arr[0][name])
 
 // {
 //   "id": 1,
@@ -198,7 +211,17 @@ spacer("");
 
 spacer("displayManagementTree");
 //given a tree of employees, generate a display which displays the hierarchy
-displayManagementTree(generateManagementTree(employees)); /*
+//displayManagementTree(generateManagementTree(employees));
+//
+//Take in an object
+//go into array and each node
+//go recursive down until you cannot anymore
+const displayManagementTree = (arr) => {
+  console.log(arr[`reports`][1][`reports`][0][`name`]);
+};
+
+displayManagementTree(generateManagementTree(employees));
+/*
   moe
   -larry
   --shep
